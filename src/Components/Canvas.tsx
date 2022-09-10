@@ -1,46 +1,58 @@
 import { fabric } from "fabric";
-import { Box } from "@mui/system";
+import { Box, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Canvas = (props: any) => {
-
-  const [imgUrl, setImgUrl] = useState<string>(props?.imgUrl);
-  
   useEffect(() => {
-    setImgUrl(props?.imgUrl)
-  }, [props?.imgUrl])
-  
-  
-  useEffect(() => {
-    var canvas = new fabric.Canvas("c");
-  canvas.setWidth(400);
-  canvas.setHeight(400);
-  
-    fabric.Image.fromURL(imgUrl, function (oImg) {
-      oImg.set({
-        width: canvas.width,
-        height: canvas.height,
+    var canvas = new fabric.Canvas("c", {
+      hoverCursor: "pointer",
+      selection: true,
+    });
+    canvas.setWidth(400);
+    canvas.setHeight(400);
+    fabric.Image.fromURL(props?.imgUrl, function (img: any) {
+      img.scale(0.5).set({
+        left: 150,
+        top: 150,
+        angle: 0,
         originX: "left",
         originY: "top",
       });
-      canvas.setOverlayImage(oImg, canvas.renderAll.bind(canvas));
-      canvas.add(oImg);
+      // canvas.setOverlayImage(img, canvas.renderAll.bind(canvas));
+      // canvas.add(img)
+      canvas.centerObject(img).add(img).renderAll();
     });
-   
-  }, [imgUrl])
-  
-  if (!props?.imgUrl) {
-    return <Box sx={{ display: "flex" }}>Select any image file.</Box>;
-  }
+  }, [props?.imgUrl]);
+
   return (
     <>
-      <div style={{  }}>
-        <canvas id="c" 
-        style={{ border: "1px solid #D3D3D3" }} 
-        />
-        <h6>{props?.imgUrl}</h6>
-      </div>
+      {props?.imgUploading ? (
+        <Box sx={{ display: "flex" }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <>
+          {props?.imgUrl ? (
+            <>
+              <div style={{}}>
+                <canvas id="c" style={{ border: "1px solid #D3D3D3" }} />
+                <Typography variant="subtitle2" sx={{ mt: 2 }}>
+                  {props?.fileName}
+                </Typography>
+              </div>
+            </>
+          ) : (
+            <>
+              <Box sx={{ display: "flex" }}>
+                <Typography variant="subtitle2">
+                  Select any image file.
+                </Typography>
+              </Box>
+            </>
+          )}
+        </>
+      )}
     </>
   );
 };
