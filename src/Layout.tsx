@@ -15,7 +15,6 @@ import CircularProgress from "@mui/material/CircularProgress";
 const Layout = () => {
   const [imgUrl, setImgUrl] = useState("");
   const [fileName, setFileName] = useState("");
-  console.log(imgUrl);
   // Image Upload
   const [imgUploading, setImgUploading] = useState<boolean>(false);
   const inputFileRef = useRef<HTMLInputElement>(null);
@@ -39,16 +38,17 @@ const Layout = () => {
     handleDropFiles(e.target.files!);
   };
   const handleInputFileRefClick = () => {
-    setImgUrl("");
     inputFileRef.current?.click();
   };
 
   //create canvas
   useEffect(() => {
-    var canvas = new fabric.Canvas("c");
+    var canvas = new fabric.Canvas("c", {
+      hoverCursor: "pointer",
+      selection: true,
+    });
     canvas.setWidth(400);
     canvas.setHeight(400);
-
     fabric.Image.fromURL(imgUrl, function (img: any) {
       img.scale(0.5).set({
         left: 150,
@@ -57,8 +57,9 @@ const Layout = () => {
         originX: "left",
         originY: "top",
       });
-      canvas.setOverlayImage(img, canvas.renderAll.bind(canvas));
-      canvas.add(img);
+      // canvas.setOverlayImage(img, canvas.renderAll.bind(canvas));
+      // canvas.add(img)
+      canvas.centerObject(img).add(img).renderAll();
     });
   }, [imgUrl]);
 
@@ -170,7 +171,6 @@ const Layout = () => {
                   ) : (
                     <>
                       <Box sx={{ display: "flex" }}>Select any image file.</Box>
-                      ;
                     </>
                   )}
                 </>
